@@ -30,7 +30,7 @@ class EEPROM {
 		void setAddress(unsigned int twoByte);
 		void startWrite();
 		void startRead();
-		void readData(int startAddress, int howManyAddresses);
+		void readData(long int startAddress, long int howManyAddresses);
 		void writeData(byte inputData, unsigned int address);
 		void writeDataSD(int programLength);
 		void autoSetup(void);
