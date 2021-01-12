@@ -22,9 +22,26 @@
 EEPROM::EEPROM(char fileName[], const byte clockTime,int chipSelectPin,
 			   const byte *DATA, const byte *ADDR, const byte writePin,
 			   const byte OEPin) {
-	_myFile = SD.open(fileName);
+	Serial.begin(SERIAL_SPEED);
+	  
+	if (!SD.begin(_chipSelectPin)) {
+		Serial.println("SD card initialization failed.");
+		_SDCardReady = false;
+		_myFile = SD.open(fileName);
+		//while (1);
+	} else {
+		  Serial.println("SD card initialization complete.");
+
+		  if (!(_myFile = SD.open(fileName))) {
+			Serial.println("Error opening file");
+			_SDCardReady = false;
+			//while(1);
+		  } else {
+			_SDCardReady = true;
+		  }
+	}
+	  
 	_clockTime = clockTime;
-	_SDCardReady = false;
 	
 	_chipSelectPin = chipSelectPin;
 	_DATA = DATA;
@@ -59,8 +76,8 @@ void EEPROM::startRead(){
 	return;
 }
 /************************************************************************/
-void EEPROM::readData(int startAddress, int howManyAddresses){
-	for(int i = startAddress; i < howManyAddresses; i++){
+void EEPROM::readData(long int startAddress, long int howManyAddresses){
+	for(long int i = startAddress; i < startAddress + howManyAddresses; i++){
     unsigned char dataValue;
     char printString[40];
     
@@ -112,22 +129,6 @@ void EEPROM::writeDataSD(int programLength){
 }
 /************************************************************************/
 void EEPROM::autoSetup(void){
-	Serial.begin(SERIAL_SPEED);
-	  
-	  if (!SD.begin(_chipSelectPin)) {
-		Serial.println("SD card initialization failed.");
-		//while (1);
-	  } else {
-		  Serial.println("SD card initialization complete.");
-
-		  if (!_myFile) {
-			Serial.println("Error opening file");
-			//while(1);
-		  } else {
-			_SDCardReady = true;
-		  }
-	  }
-	  
 	  pinMode(_writePin, OUTPUT);
 	  pinMode(_OEPin, OUTPUT);
 
