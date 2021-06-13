@@ -27,6 +27,7 @@ class EEPROM {
 		EEPROM(char fileName[], const byte clockTime,int chipSelectPin,
 			   const byte *DATA, const byte *ADDR, const byte writePin,
 			   const byte OEPin);
+		EEPROM(char fileName[]);
 		void setAddress(unsigned int twoByte);
 		void startWrite();
 		void startRead();
@@ -41,6 +42,7 @@ class EEPROM {
 *		variables to be given values at construction)
 **************************************************************************/
 		File _myFile;
+		char* _fileName;
 		byte _clockTime;
 		bool _SDCardReady;
 /************************************************************************/
