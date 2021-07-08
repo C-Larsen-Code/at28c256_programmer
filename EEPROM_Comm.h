@@ -10,6 +10,7 @@
 #include <Arduino.h>
 #include <SPI.h>
 #include <SD.h>
+#include <stdio.h>
 #include <string.h>
 
 #define SERIAL_SPEED 38400
@@ -24,7 +25,7 @@ class EEPROM {
 *	Function Declarations
 **************************************************************************/
 	public:
-		EEPROM(char fileName[], const byte clockTime,int chipSelectPin,
+		EEPROM(char fileName[], const int clockTime,int chipSelectPin,
 			   const byte *DATA, const byte *ADDR, const byte writePin,
 			   const byte OEPin);
 		EEPROM(char fileName[]);
@@ -32,6 +33,7 @@ class EEPROM {
 		void startWrite();
 		void startRead();
 		void readData(long int startAddress, long int howManyAddresses);
+		void hexdump(int numOfLines);
 		void writeData(byte inputData, unsigned int address);
 		void writeDataSD(int programLength);
 		void autoSetup(void);

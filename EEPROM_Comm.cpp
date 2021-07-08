@@ -1,4 +1,5 @@
 #include "EEPROM_Comm.h"
+#define HEXDUMP_LINE 55
 
 /*************************************************************************
 *	Function Definitions
@@ -19,7 +20,7 @@
 **************************************************************************/
 
 /*************************************************************************/
-EEPROM::EEPROM(char fileName[], const byte clockTime,int chipSelectPin,
+EEPROM::EEPROM(char fileName[], const int clockTime,int chipSelectPin,
 			   const byte *DATA, const byte *ADDR, const byte writePin,
 			   const byte OEPin) {
 	_fileName = fileName;
@@ -76,19 +77,49 @@ void EEPROM::startRead(){
 	return;
 }
 /************************************************************************/
+void EEPROM::hexdump(int numOfLines){
+	// 55 characters per line (plus ending null character)
+	char *outString = (char*) calloc(numOfLines * HEXDUMP_LINE, sizeof(char));
+	char buffer[6] = {0};
+	for (int i = 0; i < numOfLines * 0x10; i+=0x10) {
+		
+		sprintf(buffer, "%0.4x ", i);
+		strcat(outString, buffer);
+		
+		for (int j = 0; j < 0x10; j++) {
+			unsigned int dataValue = 0;
+			// Read in all 8 data bits
+			for(int k = 0; k < 8; k++){
+				setAddress(i+j);
+				delayMicroseconds(50);
+				dataValue = (dataValue << 1) + (digitalRead(_DATA[k]) ? 1 : 0);
+			}
+			sprintf(buffer, " %0.2x", dataValue);
+			if (j == 0x7) strcat(buffer, " ");
+			else if (j == 0xF)
+				if (i == numOfLines - 1) strcat (buffer, "\0");
+				else strcat(buffer, "\n"); 
+			
+			strcat(outString, buffer);
+		}
+	}
+	Serial.print(outString);
+	return;
+}
+/************************************************************************/
 void EEPROM::readData(long int startAddress, long int howManyAddresses){
 	for(long int i = startAddress; i < startAddress + howManyAddresses; i++){
-    unsigned long int dataValue = 0;
-    char printString[40];
-    
-    for(int j = 0; j < 8; j++){
-      setAddress(i);
-      delayMicroseconds(5);
-      dataValue = (dataValue << 1) + (digitalRead(_DATA[j]) ? 1 : 0);
-    }
-    sprintf(printString, "Address:  0x%.4lx   Data: 0x%.2x\n", i, dataValue);
-	Serial.print(printString);
-  }
+		unsigned long int dataValue = 0;
+		char printString[40];
+		
+		for(int j = 0; j < 8; j++){
+			setAddress(i);
+			delayMicroseconds(50);
+			dataValue = (dataValue << 1) + (digitalRead(_DATA[j]) ? 1 : 0);
+		}
+		sprintf(printString, "Address:  0x%.4lx   Data: 0x%.2x\n", i, dataValue);
+		Serial.print(printString);
+	}
 	return;
 }
 /************************************************************************/
