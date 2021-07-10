@@ -74,6 +74,8 @@ void EEPROM::startRead(){
 	}
 	digitalWrite(_OEPin, LOW);
 	Serial.println("Ready to read values");
+	// The delay is to ensure correct reading of the first three-ish addresses
+	delay(100);
 	return;
 }
 /************************************************************************/
