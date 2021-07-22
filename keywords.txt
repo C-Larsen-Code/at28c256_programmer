@@ -15,13 +15,13 @@ EEPROM_Comm	KEYWORD1
 #############################################
 
 setAddress	KEYWORD2
-begin	KEYWORD2
+autoSetup	KEYWORD2
+printInternalVals	KEYWORD2
 startWrite	KEYWORD2
-startRead   KEYWORD2
-readData	KEYWORD2
 writeData	KEYWORD2
 writeDataSD	KEYWORD2
-autoSetup	KEYWORD2
+startRead	KEYWORD2
+readData	KEYWORD2
 hexdump	KEYWORD2
 
 #############################################
