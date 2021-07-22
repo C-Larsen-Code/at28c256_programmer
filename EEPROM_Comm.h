@@ -70,11 +70,6 @@ class EEPROM {
 		int _chipSelectPin;
 		const byte *_DATA;
 		const byte *_ADDR;
-		// Pin A7 is the highest order Data bit (D7)
-		const byte default_DATA[8] = {A7, A6, A5, A4, A3, A2, A1, A0};
-		// Pin 47 is the (second) highest order Address bit (A14)
-		const byte default_ADDR[15] = {33, 34, 35, 36, 37, 38, 39, 40,
-									 41, 42, 43, 44, 45, 46, 47};
 		byte _writePin;
 		byte _OEPin;
 /************************************************************************/
