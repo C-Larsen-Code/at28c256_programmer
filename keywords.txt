@@ -15,29 +15,10 @@ EEPROM_Comm	KEYWORD1
 #############################################
 
 setAddress	KEYWORD2
-autoSetup	KEYWORD2
 printInternalVals	KEYWORD2
 startWrite	KEYWORD2
+writeByte	KEYWORD2
 writeData	KEYWORD2
-writeDataSD	KEYWORD2
 startRead	KEYWORD2
 readData	KEYWORD2
 hexdump	KEYWORD2
-
-#############################################
-# Constants (LITERAL1)
-#############################################
-
-DATA	LITERAL2
-ADDR	LITERAL2
-
-SERIAL_SPEED	LITERAL1
-PROGRAM_LENGTH	LITERAL1
-
-myFile	LITERAL1
-clockTime	LITERAL1
-fileName	LITERAL1
-
-chipSelectPin	LITERAL1
-writePin	LITERAL1
-OEPin	LITERAL1

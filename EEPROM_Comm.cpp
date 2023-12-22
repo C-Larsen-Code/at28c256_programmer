@@ -30,31 +30,23 @@ void srlPrintLn(char str[]) {
 *    -readData:      Prints "howManyAddresses" number of addresses/data
 *                    stored there, starting from the reference address
 *                    (which is parameter one)
-*    -writeData:     Writes specified data to an address on the EEPROM
-*    -writeDataSD:    
-*    -autoSetup:     Gets SD card, serial port, and address/data lines ready
-*                    for use
+*    -writeByte:     Writes specified data to an address on the EEPROM
+*    -writeData:    
 **************************************************************************/
 
 /*************************************************************************/
 
-EEPROM::EEPROM(File *file, const byte clockTime, const byte *dataPins,
-               const byte *addrPins, const byte writePin, const byte OEPin) {
-    _file = file;
-    _clockTime = clockTime;
-    
-    _dataPins = dataPins;
-    _addrPins = addrPins;
-    _writePin = writePin;
-    _OEPin = OEPin;
-
+EEPROM::EEPROM(const byte clockTime, const byte *dataPins,
+               const byte *addrPins, const byte writePin, const byte OEPin):
+    _clockTime(clockTime), _dataPins(dataPins),
+    _addrPins(addrPins), _writePin(writePin), _OEPin(OEPin)
+{
     _currCommMode = CommMode::none;
 
     this->setup();
 }
 
-EEPROM::EEPROM(File *file) {
-    _file = file;
+EEPROM::EEPROM() {
     _clockTime = 255;
     
     // Pin A7 is the highest order Data bit (D7)
@@ -75,7 +67,7 @@ EEPROM::EEPROM(File *file) {
 
 /*************************************************************************/
 
-void EEPROM::setAddress(unsigned int twoByte) {
+void EEPROM::setAddress(unsigned int twoByte) const {
     //Lowest to highest order bits (pins 53 to 39)
     for(int i=0; i<15; i++){
         digitalWrite(_addrPins[i], (twoByte >> i) & 1);
@@ -84,7 +76,7 @@ void EEPROM::setAddress(unsigned int twoByte) {
 
 /************************************************************************/
 
-void EEPROM::setup(void){
+void EEPROM::setup(void) {
     pinMode(_writePin, OUTPUT);
     pinMode(_OEPin, OUTPUT);
 
@@ -103,13 +95,11 @@ void EEPROM::setup(void){
         serialPrint = &noSrlPrint;
         serialPrintLn = &noSrlPrint;
     }
-    this->serialPrintLn("Exiting EEPROM::setup");
-    Serial.println("Exiting EEPROM::setup");
 }
 
 /************************************************************************/
 
-void EEPROM::printInternalVals(void) {
+void EEPROM::printInternalVals(void) const {
     char buffer[101];
     char smallBuffer[6];
 
@@ -148,8 +138,7 @@ void EEPROM::printInternalVals(void) {
 
 /************************************************************************/
 
-void EEPROM::startWrite(){
-    Serial.println("2");
+void EEPROM::startWrite() {
     for(int i=0; i<8; i++){
         pinMode(_dataPins[i], OUTPUT);
         digitalWrite(_dataPins[i], LOW);
@@ -161,7 +150,7 @@ void EEPROM::startWrite(){
 
 /************************************************************************/
 
-void EEPROM::writeData(byte inputData, unsigned int address){
+void EEPROM::writeByte(byte inputData, unsigned int address) const {
     char printString[10];
     for(int i=0; i<8; i++){
         //From highest order bit to lowest order bit
@@ -177,36 +166,25 @@ void EEPROM::writeData(byte inputData, unsigned int address){
     digitalWrite(_writePin, LOW);
     delayMicroseconds(_clockTime);
     digitalWrite(_writePin, HIGH);
-    return;
 }
 
 /************************************************************************/
 
-void EEPROM::writeDataSD(int programLength){
+void EEPROM::writeData(Stream &inpText, int programLength) {
     if (_currCommMode != CommMode::write) {
-        Serial.println("1");
         this->startWrite();
     }
 
     // Write the main part of the executable to the EEPROM
-    for(unsigned int addr = 0x0000; addr<programLength && _file->available();
+    for(unsigned int addr = 0x0000; addr<programLength && inpText.available();
         addr++){
-        _file->seek(addr);
-        writeData(_file->peek(), addr);
+        writeByte(inpText.read(), addr);
     }
-    // Write the reset vectors to the EEPROM
-    for(unsigned int addr = 0x7ff0; addr<=0x7fff && _file->available();
-        addr++) {
-      _file->seek(addr);
-      writeData(_file->peek(), addr);
-    }
-
-    return;
 }
 
 /************************************************************************/
 
-void EEPROM::startRead(){
+void EEPROM::startRead() {
     // Only start a read if Serial output has been enabled
     if (!Serial) return;
 
@@ -217,12 +195,11 @@ void EEPROM::startRead(){
     // The delay is to ensure correct reading of the first three-ish addresses
     delay(100);
     _currCommMode = CommMode::read;
-    return;
 }
 
 /************************************************************************/
 
-void EEPROM::readData(long int startAddress, long int howManyAddresses){
+void EEPROM::readData(long int startAddress, long int howManyAddresses) {
     if (!Serial) return;
     if (_currCommMode != CommMode::read) {
         this->startRead(); 
@@ -240,12 +217,11 @@ void EEPROM::readData(long int startAddress, long int howManyAddresses){
         sprintf(printString, "Address:  0x%.4lx   Data: 0x%.2x\n", i, dataValue);
         this->serialPrint(printString);
     }
-    return;
 }
 
 /************************************************************************/
 
-void EEPROM::hexdump(int numOfLines){
+void EEPROM::hexdump(int numOfLines) const {
     if (!Serial) return;
 
     // 55 characters per line (plus ending null character)
@@ -274,7 +250,6 @@ void EEPROM::hexdump(int numOfLines){
         }
     }
     this->serialPrint(outString);
-    return;
 }
 
 /************************************************************************/
