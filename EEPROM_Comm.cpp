@@ -47,7 +47,7 @@ EEPROM::EEPROM(const byte clockTime, const byte *dataPins,
 }
 
 EEPROM::EEPROM() {
-    _clockTime = 255;
+    _clockTime = 1000;
     
     // Pin A7 is the highest order Data bit (D7)
     static const byte defaultDataPins[8] = {A7, A6, A5, A4, A3, A2, A1, A0};
@@ -229,12 +229,12 @@ void EEPROM::hexdump(int numOfLines) {
     }
 
     // 55 characters per line (plus ending null character)
-    char *outString = (char*) calloc(numOfLines * HEXDUMP_LINE, sizeof(char));
     char buffer[6] = {0};
     for (int i = 0; i < numOfLines * 0x10; i+=0x10) {
-        
+        String outString;
+
         sprintf(buffer, "%0.4x ", i);
-        strcat(outString, buffer);
+        outString.concat(buffer);
         
         for (int j = 0; j < 0x10; j++) {
             unsigned int dataValue = 0;
@@ -250,10 +250,10 @@ void EEPROM::hexdump(int numOfLines) {
                 if (i == numOfLines - 1) strcat (buffer, "\0");
                 else strcat(buffer, "\n"); 
             
-            strcat(outString, buffer);
+            outString.concat(buffer);
         }
+        this->serialPrint(outString.c_str());
     }
-    this->serialPrint(outString);
 }
 
 /************************************************************************/

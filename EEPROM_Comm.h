@@ -41,7 +41,7 @@ class EEPROM {
         void setup(void);
 
         // Variable declarations (create space in memory for these private
-        byte _clockTime;
+        unsigned int _clockTime;
         // To keep track of what the current communication mode is (read/write)
         CommMode _currCommMode;
         // Serial print functions that check if the Serial port was initialized
