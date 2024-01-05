@@ -6,15 +6,15 @@
 // been initialized or not
 /*************************************************************************/
 
-void noSrlPrint(char str[]) {
+void noSrlPrint(const char str[]) {
     return;
 }
 
-void srlPrint(char str[]) {
+void srlPrint(const char str[]) {
     Serial.print(str);
 }
 
-void srlPrintLn(char str[]) {
+void srlPrintLn(const char str[]) {
     Serial.println(str);
 }
 
@@ -221,8 +221,12 @@ void EEPROM::readData(long int startAddress, long int howManyAddresses) {
 
 /************************************************************************/
 
-void EEPROM::hexdump(int numOfLines) const {
+// Imitate the behavior of `hexdump -C`
+void EEPROM::hexdump(int numOfLines) {
     if (!Serial) return;
+    if (_currCommMode != CommMode::read) {
+        this->startRead(); 
+    }
 
     // 55 characters per line (plus ending null character)
     char *outString = (char*) calloc(numOfLines * HEXDUMP_LINE, sizeof(char));

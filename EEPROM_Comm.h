@@ -26,7 +26,7 @@ class EEPROM {
         void writeData(Stream &inpText, int programLength);
 
         void readData(long int startAddress, long int howManyAddresses);
-        void hexdump(int numOfLines) const;
+        void hexdump(int numOfLines);
 
     private:
         // Setting the address is used in reading and writing. Could have
@@ -46,8 +46,8 @@ class EEPROM {
         CommMode _currCommMode;
         // Serial print functions that check if the Serial port was initialized
         // or not.
-        void (*serialPrint)(char str[]);
-        void (*serialPrintLn)(char str[]);
+        void (*serialPrint)(const char str[]);
+        void (*serialPrintLn)(const char str[]);
 
         // For EEPROM
         const byte *_dataPins;
