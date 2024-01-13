@@ -8,7 +8,6 @@
 #define EEPROM_COMM_H
 
 #include <Arduino.h>
-#include <SD.h>
 
 // An enum to track reading/writing mode
 enum CommMode { read, write, none };
