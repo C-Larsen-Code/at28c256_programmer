@@ -3,22 +3,16 @@
 #############################################
 
 #############################################
-# Datatypes/File Name (KEYWORD1)
+# Datatypes (KEYWORD1)
 #############################################
 
-EEPROM_Machine_Code	KEYWORD1
 EEPROM	KEYWORD1
-EEPROM_Comm	KEYWORD1
 
 #############################################
 # Methods and Functions (KEYWORD2)
 #############################################
 
-setAddress	KEYWORD2
 printInternalVals	KEYWORD2
-startWrite	KEYWORD2
-writeByte	KEYWORD2
 writeData	KEYWORD2
-startRead	KEYWORD2
 readData	KEYWORD2
 hexdump	KEYWORD2
