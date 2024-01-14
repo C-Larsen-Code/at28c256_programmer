@@ -4,8 +4,8 @@
 *************************************************************************/
 
 
-#ifndef EEPROM_COMM_H
-#define EEPROM_COMM_H
+#ifndef AT28C256_PROGRAMMER_H
+#define AT28C256_PROGRAMMER_H
 
 #include <Arduino.h>
 

@@ -1,5 +1,5 @@
 #############################################
-# Syntax Coloring Map for EEPROM_Machine_Code
+# Syntax Coloring Map for AT28C256_Programmer
 #############################################
 
 #############################################
