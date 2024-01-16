@@ -164,31 +164,6 @@ void EEPROM::startRead() {
 
 /************************************************************************/
 
-void EEPROM::readData(long int startAddress, long int howManyAddresses) {
-    if (!Serial) return;
-    if (_currCommMode != CommMode::read) {
-        this->startRead(); 
-    }
-
-    // Print lines requested unless they go past the last address (7FFF).
-    for(unsigned int i = startAddress;
-        i < startAddress + howManyAddresses && i < 0x7FFF; i++)
-    {
-        byte dataValue = 0;
-        char printString[40];
-        
-        for(int j = 0; j < 8; j++){
-            setAddress(i);
-            delayMicroseconds(50);
-            dataValue = (dataValue << 1) + (digitalRead(_dataPins[j]) ? 1 : 0);
-        }
-        sprintf(printString, "Address:  0x%.4lx   Data: 0x%.2x\n", i, dataValue);
-        this->serialPrint(printString);
-    }
-}
-
-/************************************************************************/
-
 // Imitate the behavior of `hexdump -C`
 void EEPROM::hexdump(unsigned int startAddr, unsigned int numOfLines) {
     if (!Serial) return;

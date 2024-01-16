@@ -22,7 +22,6 @@ class EEPROM {
         void writeData(Stream &inpText,
             unsigned int startAddr, unsigned int finalAddr);
 
-        void readData(long int startAddress, long int howManyAddresses);
         void hexdump(unsigned int startAddr, unsigned int numOfLines);
 
     private:

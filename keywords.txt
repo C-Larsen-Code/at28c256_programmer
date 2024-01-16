@@ -12,7 +12,5 @@ EEPROM	KEYWORD1
 # Methods and Functions (KEYWORD2)
 #############################################
 
-printInternalVals	KEYWORD2
 writeData	KEYWORD2
-readData	KEYWORD2
 hexdump	KEYWORD2
