@@ -19,13 +19,11 @@ class EEPROM {
             const byte *addrPins, const byte writePin, const byte OEPin);
         EEPROM();
 
-        // Used for debugging the internal values of the object
-        void printInternalVals(void) const;
-
-        void writeData(Stream &inpText, int programLength);
+        void writeData(Stream &inpText,
+            unsigned int startAddr, unsigned int finalAddr);
 
         void readData(long int startAddress, long int howManyAddresses);
-        void hexdump(int numOfLines);
+        void hexdump(unsigned int startAddr, unsigned int numOfLines);
 
     private:
         // Setting the address is used in reading and writing. Could have

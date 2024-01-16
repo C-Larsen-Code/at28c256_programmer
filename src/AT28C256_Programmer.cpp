@@ -99,45 +99,6 @@ void EEPROM::setup(void) {
 
 /************************************************************************/
 
-void EEPROM::printInternalVals(void) const {
-    char buffer[101];
-    char smallBuffer[6];
-
-    // Clock Time
-    sprintf(buffer, "_clockTime\t:\t%d", _clockTime);
-    this->serialPrintLn(buffer);
-
-    // Write Enable Pin
-    sprintf(buffer, "_writePin\t:\t%d", _writePin);
-    this->serialPrintLn(buffer);
-
-    // Output Enable Pin
-    sprintf(buffer, "_OEPin\t\t:\t%d", _OEPin);
-    this->serialPrintLn(buffer);
-
-    // Data Lines
-    sprintf(buffer, "Data\t\t:\t");
-    for (int i=0; i<7; i++) {
-        sprintf(smallBuffer, "%d, ", _dataPins[i]);
-        strcat(buffer, smallBuffer);
-    }
-    sprintf(smallBuffer, "%d", _dataPins[7]);
-    strcat(buffer, smallBuffer);
-    this->serialPrintLn(buffer);
-
-    // Address Lines
-    sprintf(buffer, "Address\t\t:\t");
-    for (int i=0; i<14; i++) {
-        sprintf(smallBuffer, "%d, ", _addrPins[i]);
-        strcat(buffer, smallBuffer);
-    }
-    sprintf(smallBuffer, "%d", _addrPins[14]);
-    strcat(buffer, smallBuffer);
-    this->serialPrintLn(buffer);
-}
-
-/************************************************************************/
-
 void EEPROM::startWrite() {
     for(int i=0; i<8; i++){
         pinMode(_dataPins[i], OUTPUT);
@@ -170,14 +131,18 @@ void EEPROM::writeByte(byte inputData, unsigned int address) const {
 
 /************************************************************************/
 
-void EEPROM::writeData(Stream &inpText, int programLength) {
+void EEPROM::writeData(
+    Stream &inpText, unsigned int startAddr, unsigned int finalAddr)
+{
     if (_currCommMode != CommMode::write) {
         this->startWrite();
     }
 
     // Write the main part of the executable to the EEPROM
-    for(unsigned int addr = 0x0000; addr<programLength && inpText.available();
-        addr++){
+    for(unsigned int addr = startAddr;
+        addr <= finalAddr && addr < 0x7FFF && inpText.available();
+        addr++)
+    {
         writeByte(inpText.read(), addr);
     }
 }
@@ -205,8 +170,11 @@ void EEPROM::readData(long int startAddress, long int howManyAddresses) {
         this->startRead(); 
     }
 
-    for(long int i = startAddress; i < startAddress + howManyAddresses; i++){
-        unsigned long int dataValue = 0;
+    // Print lines requested unless they go past the last address (7FFF).
+    for(unsigned int i = startAddress;
+        i < startAddress + howManyAddresses && i < 0x7FFF; i++)
+    {
+        byte dataValue = 0;
         char printString[40];
         
         for(int j = 0; j < 8; j++){
@@ -222,24 +190,32 @@ void EEPROM::readData(long int startAddress, long int howManyAddresses) {
 /************************************************************************/
 
 // Imitate the behavior of `hexdump -C`
-void EEPROM::hexdump(int numOfLines) {
+void EEPROM::hexdump(unsigned int startAddr, unsigned int numOfLines) {
     if (!Serial) return;
     if (_currCommMode != CommMode::read) {
         this->startRead(); 
     }
 
+    // Start lines at the beginning of a 16 byte block (aka the last hex
+    // digit of the address is 0)
+    startAddr = startAddr >> 4 << 4;
+
     // 55 characters per line (plus ending null character)
     char buffer[6] = {0};
-    for (int i = 0; i < numOfLines * 0x10; i+=0x10) {
+
+    // Print lines requested unless they go past the last address (7FFF).
+    for (unsigned int i = startAddr;
+         i < startAddr + numOfLines * 0x10 && i < 0x7FFF; i+=0x10)
+    {
         String outString;
 
         sprintf(buffer, "%0.4x ", i);
         outString.concat(buffer);
         
-        for (int j = 0; j < 0x10; j++) {
+        for (unsigned int j = 0; j < 0x10; j++) {
             unsigned int dataValue = 0;
             // Read in all 8 data bits
-            for(int k = 0; k < 8; k++){
+            for(unsigned int k = 0; k < 8; k++){
                 setAddress(i+j);
                 delayMicroseconds(50);
                 dataValue = (dataValue << 1) + (digitalRead(_dataPins[k]) ? 1 : 0);
