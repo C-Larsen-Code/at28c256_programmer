@@ -1,4 +1,4 @@
-#include "AT28C256_Programmer.h"
+#include "EepromProgrammer.h"
 
 /*************************************************************************/
 // Some serial print variants to use, depending on if the serial port has

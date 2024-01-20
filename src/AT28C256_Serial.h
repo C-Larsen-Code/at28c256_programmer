@@ -2,12 +2,12 @@
 //    Command Line Interface (for choosing file to write to EEPROM)
 //========================================================================
 
-#ifndef AT28C256_SERIAL_H
-#define AT28C256_SERIAL_H
+#ifndef EEPROM_SERIAL_CTRL_H
+#define EEPROM_SERIAL_CTRL_H
 
 #include "Arduino.h"
 #include <SD.h>
-#include "AT28C256_Programmer.h"
+#include "EepromProgrammer.h"
 
 // Set up a state machine for the simple command-line interface
 enum CmdLnState { SDCardError, FileSelect, ModeSelect, Read, Write };

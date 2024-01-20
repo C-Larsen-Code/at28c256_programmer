@@ -1,4 +1,4 @@
-#include "AT28C256_Serial.h"
+#include "EepromSerialCtrl.h"
 
 /*****************************************************
 * Program: Test individual addresses
