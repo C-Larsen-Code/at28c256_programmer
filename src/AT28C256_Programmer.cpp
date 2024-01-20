@@ -1,5 +1,4 @@
 #include "AT28C256_Programmer.h"
-#define HEXDUMP_LINE 55
 
 /*************************************************************************/
 // Some serial print variants to use, depending on if the serial port has

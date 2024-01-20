@@ -51,4 +51,5 @@ class EEPROM {
         byte _writePin;
         byte _OEPin;
 };
+
 #endif
