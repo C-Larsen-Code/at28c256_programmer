@@ -12,7 +12,7 @@
 // Set up a state machine for the simple command-line interface
 enum CmdLnState { SDCardError, FileSelect, ModeSelect, Read, Write };
 
-class EepromCmdLine {
+class EepromSerialCtrl {
     private:
         // Variables
         CmdLnState currState;
@@ -28,7 +28,7 @@ class EepromCmdLine {
         String getInput(const char *request);
         int toHexNum(const String input);
     public:
-        EepromCmdLine(const byte sdCSPin);
+        EepromSerialCtrl(const byte sdCSPin);
         void runCurrCase();
 };
 #endif

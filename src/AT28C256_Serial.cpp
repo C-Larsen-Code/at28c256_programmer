@@ -10,7 +10,7 @@
 *
 *****************************************************/
 
-EepromCmdLine::EepromCmdLine(const byte sdCSPin): sdCSPin(sdCSPin) {
+EepromSerialCtrl::EepromSerialCtrl(const byte sdCSPin): sdCSPin(sdCSPin) {
     Serial.begin(115200);
     Serial.flush();
 
@@ -25,7 +25,7 @@ EepromCmdLine::EepromCmdLine(const byte sdCSPin): sdCSPin(sdCSPin) {
 
 //------------------------------------------------------------------------
 
-void EepromCmdLine::runCurrCase() {
+void EepromSerialCtrl::runCurrCase() {
     switch(currState) {
         case CmdLnState::SDCardError:
         // Do nothing; just loop until reset
@@ -47,7 +47,7 @@ void EepromCmdLine::runCurrCase() {
 
 //------------------------------------------------------------------------
 
-void EepromCmdLine::modeSelectCase() {
+void EepromSerialCtrl::modeSelectCase() {
     Serial.print("(r)ead or (w)rite?: ");
     while (Serial.available() == 0) {}  // Wait for them to start typing
     String input = Serial.readString();
@@ -65,7 +65,7 @@ void EepromCmdLine::modeSelectCase() {
 
 //------------------------------------------------------------------------
 
-void EepromCmdLine::fileSelectCase() {
+void EepromSerialCtrl::fileSelectCase() {
     Serial.println("Available Files:");
 
     File root = SD.open("/", FILE_READ);
@@ -91,7 +91,7 @@ void EepromCmdLine::fileSelectCase() {
 
 //------------------------------------------------------------------------
 
-void EepromCmdLine::readCase() {
+void EepromSerialCtrl::readCase() {
     unsigned int startAddr;
     unsigned int numOfLines;
     String input;
@@ -118,7 +118,7 @@ void EepromCmdLine::readCase() {
 
 //------------------------------------------------------------------------
 
-void EepromCmdLine::writeCase() {
+void EepromSerialCtrl::writeCase() {
     String input1 = getInput("Enter the address of the first byte of the program to flash: ");
     int startAddr = toHexNum(input1);
     String input2 = getInput("Enter the address of the last byte of the program to flash: ");
@@ -131,7 +131,7 @@ void EepromCmdLine::writeCase() {
 
 //------------------------------------------------------------------------
 
-String EepromCmdLine::getInput(const char *request) {
+String EepromSerialCtrl::getInput(const char *request) {
     Serial.print(request);
     while (Serial.available() == 0) {}
     String input = Serial.readString();
@@ -142,7 +142,7 @@ String EepromCmdLine::getInput(const char *request) {
 
 //------------------------------------------------------------------------
 
-int EepromCmdLine::toHexNum(const String input) {
+int EepromSerialCtrl::toHexNum(const String input) {
     unsigned int hexNum = 0;
     byte inputLastIdx = input.length() - 1;
 
