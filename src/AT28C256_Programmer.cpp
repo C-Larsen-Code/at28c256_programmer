@@ -20,7 +20,7 @@ void srlPrintLn(const char str[]) {
 /*************************************************************************
 *    Function Definitions
 **************************************************************************
-*    -EEPROM:        Constructor for instance of this class
+*    -EepromProgrammer: Constructor for instance of this class
 *    -setAddress:    Output an address between 0x0000 and 0x7fff to the
 *                    EEPROM
 *    -startWrite:    Puts all eight data lines into output mode (starting at
@@ -35,7 +35,7 @@ void srlPrintLn(const char str[]) {
 
 /*************************************************************************/
 
-EEPROM::EEPROM(const byte clockTime, const byte *dataPins,
+EepromProgrammer::EepromProgrammer(const byte clockTime, const byte *dataPins,
                const byte *addrPins, const byte writePin, const byte OEPin):
     _clockTime(clockTime), _dataPins(dataPins),
     _addrPins(addrPins), _writePin(writePin), _OEPin(OEPin)
@@ -45,7 +45,7 @@ EEPROM::EEPROM(const byte clockTime, const byte *dataPins,
     this->setup();
 }
 
-EEPROM::EEPROM() {
+EepromProgrammer::EepromProgrammer() {
     _clockTime = 1000;
     
     // Pin A7 is the highest order Data bit (D7)
@@ -66,7 +66,7 @@ EEPROM::EEPROM() {
 
 /*************************************************************************/
 
-void EEPROM::setAddress(unsigned int twoByte) const {
+void EepromProgrammer::setAddress(unsigned int twoByte) const {
     //Lowest to highest order bits (pins 53 to 39)
     for(int i=0; i<15; i++){
         digitalWrite(_addrPins[i], (twoByte >> i) & 1);
@@ -75,7 +75,7 @@ void EEPROM::setAddress(unsigned int twoByte) const {
 
 /************************************************************************/
 
-void EEPROM::setup(void) {
+void EepromProgrammer::setup(void) {
     pinMode(_writePin, OUTPUT);
     pinMode(_OEPin, OUTPUT);
 
@@ -98,7 +98,7 @@ void EEPROM::setup(void) {
 
 /************************************************************************/
 
-void EEPROM::startWrite() {
+void EepromProgrammer::startWrite() {
     for(int i=0; i<8; i++){
         pinMode(_dataPins[i], OUTPUT);
         digitalWrite(_dataPins[i], LOW);
@@ -110,7 +110,7 @@ void EEPROM::startWrite() {
 
 /************************************************************************/
 
-void EEPROM::writeByte(byte inputData, unsigned int address) const {
+void EepromProgrammer::writeByte(byte inputData, unsigned int address) const {
     char printString[10];
     for(int i=0; i<8; i++){
         //From highest order bit to lowest order bit
@@ -130,7 +130,7 @@ void EEPROM::writeByte(byte inputData, unsigned int address) const {
 
 /************************************************************************/
 
-void EEPROM::writeData(
+void EepromProgrammer::writeData(
     Stream &inpText, unsigned int startAddr, unsigned int finalAddr)
 {
     if (_currCommMode != CommMode::write) {
@@ -148,7 +148,7 @@ void EEPROM::writeData(
 
 /************************************************************************/
 
-void EEPROM::startRead() {
+void EepromProgrammer::startRead() {
     // Only start a read if Serial output has been enabled
     if (!Serial) return;
 
@@ -164,7 +164,7 @@ void EEPROM::startRead() {
 /************************************************************************/
 
 // Imitate the behavior of `hexdump -C`
-void EEPROM::hexdump(unsigned int startAddr, unsigned int numOfLines) {
+void EepromProgrammer::hexdump(unsigned int startAddr, unsigned int numOfLines) {
     if (!Serial) return;
     if (_currCommMode != CommMode::read) {
         this->startRead(); 

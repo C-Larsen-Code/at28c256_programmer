@@ -17,7 +17,7 @@ class EepromCmdLine {
         // Variables
         CmdLnState currState;
         File file;
-        EEPROM eeprom;
+        EepromProgrammer eeprom;
         const byte sdCSPin;
         // Methods
         void fileSelectCase();

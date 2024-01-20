@@ -12,12 +12,12 @@
 // An enum to track reading/writing mode
 enum CommMode { read, write, none };
 
-class EEPROM {
+class EepromProgrammer {
     public:
         // Constructors
-        EEPROM(const byte clockTime, const byte *dataPins,
+        EepromProgrammer(const byte clockTime, const byte *dataPins,
             const byte *addrPins, const byte writePin, const byte OEPin);
-        EEPROM();
+        EepromProgrammer();
 
         void writeData(Stream &inpText,
             unsigned int startAddr, unsigned int finalAddr);
